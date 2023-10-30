@@ -1,22 +1,21 @@
 import 'dart:convert';
 
 import 'package:clock/clock.dart';
-import 'package:firebase_admin/src/auth/credential.dart';
-import 'package:firebase_admin/src/auth/token_verifier.dart';
 import 'package:firebase_admin/firebase_admin.dart';
 import 'package:firebase_admin/src/app.dart';
+import 'package:firebase_admin/src/auth/credential.dart';
+import 'package:firebase_admin/src/auth/token_verifier.dart';
 import 'package:jose/jose.dart';
 import 'package:openid_client/openid_client.dart' hide Credential;
 
-class ServiceAccountMockCredential extends ServiceAccountCredential
-    with MockCredentialMixin {
+class ServiceAccountMockCredential extends ServiceAccountCredential with MockCredentialMixin {
   @override
   // ignore: prefer_function_declarations_over_variables
   late final AccessToken Function() tokenFactory = () {
     return MockAccessToken.fromJson({
       'access_token': (JsonWebSignatureBuilder()
-            ..content = JsonWebTokenClaims.fromJson(
-                {'sub': 'mock-user', 'provider_id': 'testing'}).toJson()
+            ..content =
+                JsonWebTokenClaims.fromJson({'sub': 'mock-user', 'provider_id': 'testing'}).toJson()
             ..addRecipient(certificate.privateKey, algorithm: 'RS256'))
           .build()
           .toCompactSerialization(),
@@ -68,7 +67,7 @@ mixin MockCredentialMixin on Credential {
 }
 
 class MockTokenVerifier extends FirebaseTokenVerifier {
-  MockTokenVerifier(App app) : super(app);
+  MockTokenVerifier(super.app);
 
   @override
   Future<Client> getOpenIdClient() async {
@@ -110,7 +109,5 @@ class MockAccessToken implements AccessToken {
       : expirationTime = clock.now().add(expiresIn);
 
   MockAccessToken.fromJson(Map<String, dynamic> json)
-      : this(
-            accessToken: json['access_token'],
-            expiresIn: Duration(seconds: json['expires_in']));
+      : this(accessToken: json['access_token'], expiresIn: Duration(seconds: json['expires_in']));
 }

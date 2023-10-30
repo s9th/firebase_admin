@@ -51,8 +51,7 @@ class Auth implements FirebaseService {
   /// and starting from the offset as specified by [pageToken].
   ///
   /// This is used to retrieve all the users of a specified project in batches.
-  Future<ListUsersResult> listUsers(
-      [int? maxResults, String? pageToken]) async {
+  Future<ListUsersResult> listUsers([int? maxResults, String? pageToken]) async {
     return await _authRequestHandler.downloadAccount(maxResults, pageToken);
   }
 
@@ -85,8 +84,7 @@ class Auth implements FirebaseService {
     } on FirebaseException catch (error) {
       if (error.code == 'auth/user-not-found') {
         // Something must have happened after creating the user and then retrieving it.
-        throw FirebaseAuthError.internalError(
-            'Unable to create the user record provided.');
+        throw FirebaseAuthError.internalError('Unable to create the user record provided.');
       }
       rethrow;
     }
@@ -140,8 +138,7 @@ class Auth implements FirebaseService {
   /// [customUserClaims] can be `null`.
   ///
   /// Returns a promise containing `void`.
-  Future<void> setCustomUserClaims(
-      String uid, Map<String, dynamic> customUserClaims) async {
+  Future<void> setCustomUserClaims(String uid, Map<String, dynamic> customUserClaims) async {
     await _authRequestHandler.setCustomUserClaims(uid, customUserClaims);
   }
 
@@ -162,8 +159,7 @@ class Auth implements FirebaseService {
 
   /// Generates the out of band email action link for password reset flows for
   /// the email specified using the action code settings provided.
-  Future<String> generatePasswordResetLink(String email,
-      [ActionCodeSettings? actionCodeSettings]) {
+  Future<String> generatePasswordResetLink(String email, [ActionCodeSettings? actionCodeSettings]) {
     return _authRequestHandler.getEmailActionLink('PASSWORD_RESET', email,
         actionCodeSettings: actionCodeSettings);
   }
@@ -173,18 +169,15 @@ class Auth implements FirebaseService {
   Future<String> generateEmailVerificationLink(String email,
       [ActionCodeSettings? actionCodeSettings]) {
     return _authRequestHandler
-        .getEmailActionLink('VERIFY_EMAIL', email,
-            actionCodeSettings: actionCodeSettings)
+        .getEmailActionLink('VERIFY_EMAIL', email, actionCodeSettings: actionCodeSettings)
         .then((value) => value);
   }
 
   /// Generates the out of band email action link for email link sign-in flows
   /// for the email specified using the action code settings provided.
-  Future<String> generateSignInWithEmailLink(
-      String email, ActionCodeSettings? actionCodeSettings) {
+  Future<String> generateSignInWithEmailLink(String email, ActionCodeSettings? actionCodeSettings) {
     return _authRequestHandler
-        .getEmailActionLink('EMAIL_SIGNIN', email,
-            actionCodeSettings: actionCodeSettings)
+        .getEmailActionLink('EMAIL_SIGNIN', email, actionCodeSettings: actionCodeSettings)
         .then((value) => value);
   }
 
@@ -194,8 +187,7 @@ class Auth implements FirebaseService {
   /// of [IdToken]; otherwise, the future is completed with an error.
   /// An optional flag can be passed to additionally check whether the ID token
   /// was revoked.
-  Future<IdToken> verifyIdToken(String idToken,
-      [bool checkRevoked = false]) async {
+  Future<IdToken> verifyIdToken(String idToken, [bool checkRevoked = false]) async {
     var decodedIdToken = await _tokenVerifier.verifyJwt(idToken);
     // Whether to check if the token was revoked.
     if (!checkRevoked) {
@@ -287,9 +279,7 @@ class ListUsersResult {
 
   ListUsersResult.fromJson(Map<String, dynamic> map)
       : this(
-            users: (map['users'] as List)
-                .map((v) => UserRecord.fromJson(v))
-                .toList(),
+            users: (map['users'] as List).map((v) => UserRecord.fromJson(v)).toList(),
             pageToken: map['nextPageToken']);
 }
 
@@ -306,9 +296,8 @@ abstract class CreateMultiFactorInfoRequest {
 
   CreateMultiFactorInfoRequest({this.displayName, required this.factorId});
 
-  factory CreateMultiFactorInfoRequest.phone(
-      {String? displayName,
-      required String phoneNumber}) = CreatePhoneMultiFactorInfoRequest;
+  factory CreateMultiFactorInfoRequest.phone({String? displayName, required String phoneNumber}) =
+      CreatePhoneMultiFactorInfoRequest;
 }
 
 /// Represents a phone specific user-enrolled second factor for a
@@ -317,9 +306,8 @@ class CreatePhoneMultiFactorInfoRequest extends CreateMultiFactorInfoRequest {
   /// The phone number associated with a phone second factor.
   final String phoneNumber;
 
-  CreatePhoneMultiFactorInfoRequest(
-      {String? displayName, required this.phoneNumber})
-      : super(factorId: 'phone', displayName: displayName);
+  CreatePhoneMultiFactorInfoRequest({super.displayName, required this.phoneNumber})
+      : super(factorId: 'phone');
 }
 
 /// Represents the properties of a user-enrolled second factor for a
@@ -343,10 +331,7 @@ abstract class UpdateMultiFactorInfoRequest {
   final String? uid;
 
   UpdateMultiFactorInfoRequest(
-      {this.displayName,
-      required this.factorId,
-      this.enrollmentTime,
-      this.uid});
+      {this.displayName, required this.factorId, this.enrollmentTime, this.uid});
 
   factory UpdateMultiFactorInfoRequest.phone(
       {String? displayName,
@@ -362,13 +347,6 @@ class UpdatePhoneMultiFactorInfoRequest extends UpdateMultiFactorInfoRequest {
   final String phoneNumber;
 
   UpdatePhoneMultiFactorInfoRequest(
-      {String? displayName,
-      required this.phoneNumber,
-      DateTime? enrollmentTime,
-      String? uid})
-      : super(
-            factorId: 'phone',
-            displayName: displayName,
-            enrollmentTime: enrollmentTime,
-            uid: uid);
+      {super.displayName, required this.phoneNumber, super.enrollmentTime, super.uid})
+      : super(factorId: 'phone');
 }

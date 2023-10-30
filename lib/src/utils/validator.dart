@@ -1,4 +1,5 @@
 /// Validates that a string is a valid email.
+library;
 
 bool isEmail(String? email) {
   if (email == null) return false;
